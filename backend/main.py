@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel, Field, Session, create_engine, select
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///shop.db")
@@ -15,6 +16,17 @@ class Customer(CustomerIn, table=True):   # DB 표
 
 SQLModel.metadata.create_all(engine)   # 표 만들기
 app = FastAPI(title="동아고등학교 쇼핑몰 API")
+
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS", "http://localhost:3000"
+).split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def home():
