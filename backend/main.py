@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, Field, Session, create_engine, select
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///shop.db")
@@ -14,8 +15,11 @@ class CustomerIn(SQLModel):        # 입력 형식
 class Customer(CustomerIn, table=True):   # DB 표
     id: int | None = Field(default=None, primary_key=True)
 
+class UTF8JSONResponse(JSONResponse):   # 브라우저에서 한글이 깨지지 않게
+    media_type = "application/json; charset=utf-8"
+
 SQLModel.metadata.create_all(engine)   # 표 만들기
-app = FastAPI(title="동아고등학교 쇼핑몰 API")
+app = FastAPI(title="동아고등학교 쇼핑몰 API", default_response_class=UTF8JSONResponse)
 
 ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS", "http://localhost:3000"
