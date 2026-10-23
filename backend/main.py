@@ -28,6 +28,9 @@ ALLOWED_ORIGINS = os.getenv(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=os.getenv(   # 배포마다 바뀌는 Vercel 주소 허용
+        "ALLOWED_ORIGIN_REGEX", r"https://donga-shop-[a-z0-9-]+-smallbabyho\.vercel\.app"
+    ),
     allow_methods=["*"],
     allow_headers=["*"],
 )
